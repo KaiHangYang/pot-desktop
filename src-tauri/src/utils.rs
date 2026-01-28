@@ -19,10 +19,16 @@ pub fn check_and_clear_cache() {
             println!("Cache clear flag found. Clearing WebView2 data...");
             let webview_dir = app_root.join("EBWebView");
             if webview_dir.exists() {
-                if let Err(e) = fs::remove_dir_all(&webview_dir) {
-                    eprintln!("Failed to remove WebView2 data: {}", e);
-                } else {
-                    println!("WebView2 data cleared successfully.");
+                // Retry logic for deletion
+                let max_retries = 5;
+                for i in 0..max_retries {
+                    if let Err(e) = fs::remove_dir_all(&webview_dir) {
+                        eprintln!("Failed to remove WebView2 data (attempt {}/{}): {}", i + 1, max_retries, e);
+                        std::thread::sleep(std::time::Duration::from_millis(1000));
+                    } else {
+                        println!("WebView2 data cleared successfully.");
+                        break;
+                    }
                 }
             }
             let _ = fs::remove_file(flag_file);

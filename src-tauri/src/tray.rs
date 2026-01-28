@@ -113,6 +113,7 @@ pub fn tray_event_handler<'a>(app: &'a AppHandle, event: SystemTrayEvent) {
             "check_update" => on_check_update_click(),
             "view_log" => on_view_log_click(app),
             "restart" => on_restart_click(app),
+            "clear_webview_cache" => on_clear_webview_cache_click(app),
             "quit" => on_quit_click(app),
             _ => {}
         },
@@ -197,6 +198,11 @@ fn on_restart_click(app: &AppHandle) {
     info!("============== Restart App ==============");
     app.restart();
 }
+fn on_clear_webview_cache_click(app: &AppHandle) {
+    info!("============== Clear Cache and Restart ==============");
+    crate::utils::set_clear_cache_flag().unwrap();
+    app.restart();
+}
 fn on_quit_click(app: &AppHandle) {
     app.global_shortcut_manager().unregister_all().unwrap();
     info!("============== Quit App ==============");
@@ -216,6 +222,7 @@ fn tray_menu_en() -> tauri::SystemTrayMenu {
     let check_update = CustomMenuItem::new("check_update", "Check Update");
     let view_log = CustomMenuItem::new("view_log", "View Log");
     let restart = CustomMenuItem::new("restart", "Restart");
+    let clear_cache = CustomMenuItem::new("clear_webview_cache", "Clear Cache & Restart");
     let quit = CustomMenuItem::new("quit", "Quit");
     SystemTrayMenu::new()
         .add_item(input_translate)
@@ -238,6 +245,7 @@ fn tray_menu_en() -> tauri::SystemTrayMenu {
         .add_item(view_log)
         .add_native_item(SystemTrayMenuItem::Separator)
         .add_item(restart)
+        .add_item(clear_cache)
         .add_item(quit)
 }
 
@@ -254,6 +262,7 @@ fn tray_menu_zh_cn() -> tauri::SystemTrayMenu {
     let config = CustomMenuItem::new("config", "偏好设置");
     let check_update = CustomMenuItem::new("check_update", "检查更新");
     let restart = CustomMenuItem::new("restart", "重启应用");
+    let clear_cache = CustomMenuItem::new("clear_webview_cache", "清除缓存并重启");
     let view_log = CustomMenuItem::new("view_log", "查看日志");
     let quit = CustomMenuItem::new("quit", "退出");
     SystemTrayMenu::new()
@@ -277,6 +286,7 @@ fn tray_menu_zh_cn() -> tauri::SystemTrayMenu {
         .add_item(view_log)
         .add_native_item(SystemTrayMenuItem::Separator)
         .add_item(restart)
+        .add_item(clear_cache)
         .add_item(quit)
 }
 
@@ -293,6 +303,7 @@ fn tray_menu_zh_tw() -> tauri::SystemTrayMenu {
     let config = CustomMenuItem::new("config", "偏好設定");
     let check_update = CustomMenuItem::new("check_update", "檢查更新");
     let restart = CustomMenuItem::new("restart", "重啓程式");
+    let clear_cache = CustomMenuItem::new("clear_webview_cache", "清除快取並重新啟動");
     let view_log = CustomMenuItem::new("view_log", "查看日誌");
     let quit = CustomMenuItem::new("quit", "退出");
     SystemTrayMenu::new()
@@ -316,6 +327,7 @@ fn tray_menu_zh_tw() -> tauri::SystemTrayMenu {
         .add_item(view_log)
         .add_native_item(SystemTrayMenuItem::Separator)
         .add_item(restart)
+        .add_item(clear_cache)
         .add_item(quit)
 }
 
