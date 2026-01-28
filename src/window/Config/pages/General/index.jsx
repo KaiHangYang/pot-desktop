@@ -599,6 +599,22 @@ export default function General() {
                     </div>
                 </CardBody>
             </Card>
+            <Card className='mb-[10px]'>
+                <CardBody>
+                    <div className='config-item'>
+                        <h3 className='my-auto text-danger'>{t('config.general.reset_webview')}</h3>
+                        <Button
+                            color='danger'
+                            variant='flat'
+                            onPress={() => {
+                                invoke('clear_webview_cache');
+                            }}
+                        >
+                            {t('config.general.clear_cache')}
+                        </Button>
+                    </div>
+                </CardBody>
+            </Card>
         </>
     );
 }

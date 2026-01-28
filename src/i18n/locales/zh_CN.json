@@ -89,7 +89,9 @@
                     "disable": "禁用",
                     "ocr_recognize": "文字识别",
                     "ocr_translate": "截图翻译"
-                }
+                },
+                "reset_webview": "重置 WebView2",
+                "clear_cache": "清除缓存并重启"
             },
             "translate": {
                 "label": "翻译设置",

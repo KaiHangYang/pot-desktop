@@ -13,6 +13,7 @@ mod server;
 mod system_ocr;
 mod tray;
 mod updater;
+mod utils; // Added utils module
 mod window;
 
 use backup::*;
@@ -41,7 +42,23 @@ pub static APP: OnceCell<tauri::AppHandle> = OnceCell::new();
 // Text to be translated
 pub struct StringWrapper(pub Mutex<String>);
 
+#[tauri::command]
+fn clear_webview_cache(app: tauri::AppHandle) {
+    match utils::set_clear_cache_flag() {
+        Ok(_) => {
+            info!("Clear cache flag set, restarting...");
+            app.restart();
+        }
+        Err(e) => {
+            log::error!("Failed to set clear cache flag: {}", e);
+        }
+    }
+}
+
 fn main() {
+    // Check and clear cache before Tauri builder starts
+    utils::check_and_clear_cache();
+
     tauri::Builder::default()
         .plugin(tauri_plugin_single_instance::init(|app, _, cwd| {
             Notification::new(&app.config().tauri.bundle.identifier)
@@ -147,7 +164,8 @@ fn main() {
             local,
             install_plugin,
             font_list,
-            aliyun
+            aliyun,
+            clear_webview_cache 
         ])
         .on_system_tray_event(tray_event_handler)
         .build(tauri::generate_context!())
@@ -159,3 +177,4 @@ fn main() {
             }
         });
 }
+

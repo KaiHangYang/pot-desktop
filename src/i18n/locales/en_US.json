@@ -89,7 +89,9 @@
                     "disable": "Disable",
                     "ocr_recognize": "Text Recognition",
                     "ocr_translate": "Screenshot Translation"
-                }
+                },
+                "reset_webview": "Reset WebView2",
+                "clear_cache": "Clear Cache & Restart"
             },
             "translate": {
                 "label": "Translate",
