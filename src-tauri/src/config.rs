@@ -67,6 +67,7 @@ pub fn check_service_available() -> Result<(), Error> {
         "tesseract",
         "volcengine_ocr",
         "volcengine_multi_lang_ocr",
+        "openai_recognize",
     ];
     let builtin_translate_list: Vec<&str> = vec![
         "alibaba",
@@ -91,7 +92,7 @@ pub fn check_service_available() -> Result<(), Error> {
         "yandex",
         "youdao",
     ];
-    let builtin_tts_list: Vec<&str> = vec!["lingva_tts"];
+    let builtin_tts_list: Vec<&str> = vec!["lingva_tts", "openai_tts"];
     let builtin_collection_list: Vec<&str> = vec!["anki", "eudic"];
 
     let plugin_recognize_list: Vec<String> = get_plugin_list("recognize").unwrap_or_default();
