@@ -5,14 +5,12 @@ let source = null;
 export const useVoice = () => {
     const playOrStop = useCallback((data) => {
         if (source) {
-            try {
-                source.stop();
-                source.disconnect();
-            } catch (e) {
-                console.error(e);
-            }
+            // 如果正在播放，停止播放
+            source.stop();
+            source.disconnect();
             source = null;
         } else {
+            // 如果没在播放，开始播放
             audioContext.decodeAudioData(new Uint8Array(data).buffer, (buffer) => {
                 source = audioContext.createBufferSource();
                 source.buffer = buffer;
@@ -24,7 +22,7 @@ export const useVoice = () => {
                 };
             });
         }
-    }, []);
+    });
 
     const playStream = useCallback(() => {
         if (source) {

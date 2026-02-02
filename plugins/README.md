@@ -1,0 +1,1 @@
+- 改完之后，只保留info.json,main.js,openai.svg这些，打成.zip，并且后缀改成.potext

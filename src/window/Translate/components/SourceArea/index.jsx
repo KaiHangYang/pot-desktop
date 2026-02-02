@@ -47,7 +47,7 @@ export default function SourceArea(props) {
     const toastStyle = useToastStyle();
     const { t } = useTranslation();
     const textAreaRef = useRef();
-    const speak = useVoice();
+    const { speak, playStream } = useVoice();
 
     const handleNewText = async (text) => {
         text = text.trim();
@@ -190,24 +190,48 @@ export default function SourceArea(props) {
             }
             const pluginConfig = serviceInstanceConfigMap[instanceKey];
             let [func, utils] = await invoke_plugin('tts', getServiceName(instanceKey));
+            
+            let player = null;
+
             let data = await func(sourceText, ttsPluginInfo.language[detected], {
                 config: pluginConfig,
                 utils,
+                onData: (chunk) => {
+                    if (!player) {
+                        player = playStream();
+                    }
+                    player.append(chunk);
+                }
             });
-            speak(data);
+            if (player) {
+                player.end();
+            } else {
+                speak(data);
+            }
         } else {
             if (!(detected in builtinTtsServices[getServiceName(instanceKey)].Language)) {
                 throw new Error('Language not supported');
             }
             const instanceConfig = serviceInstanceConfigMap[instanceKey];
+            let player = null;
             let data = await builtinTtsServices[getServiceName(instanceKey)].tts(
                 sourceText,
                 builtinTtsServices[getServiceName(instanceKey)].Language[detected],
                 {
                     config: instanceConfig,
+                    onData: (chunk) => {
+                        if (!player) {
+                            player = playStream();
+                        }
+                        player.append(chunk);
+                    }
                 }
             );
-            speak(data);
+            if (player) {
+                player.end();
+            } else {
+                speak(data);
+            }
         }
     };
 

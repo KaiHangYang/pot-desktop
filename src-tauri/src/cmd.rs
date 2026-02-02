@@ -225,3 +225,71 @@ pub fn open_devtools(window: tauri::Window) {
         window.close_devtools();
     }
 }
+
+#[tauri::command]
+pub async fn stream_fetch(
+    window: tauri::Window,
+    url: String,
+    method: String,
+    headers: Option<std::collections::HashMap<String, String>>,
+    body: Option<String>,
+) -> Result<String, Error> {
+    use reqwest::Method;
+    use std::str::FromStr;
+    use uuid::Uuid;
+
+    let client = reqwest::Client::builder()
+        .build()?; // Auto convert to Error::Reqwest
+    let method = Method::from_str(&method).unwrap_or(Method::GET);
+    let mut request = client.request(method, &url);
+    if let Some(h) = headers {
+        for (k, v) in h {
+            request = request.header(&k, &v);
+        }
+    }
+    if let Some(b) = body {
+        request = request.body(b);
+    }
+
+    let mut response = request
+        .send()
+        .await?; // Auto convert to Error::Reqwest
+
+    if !response.status().is_success() {
+        let status = response.status();
+        let text = response.text().await.unwrap_or_default();
+        return Err(Error::Error(format!(
+            "Http Request Error\nHttp Status: {}\n{}",
+            status, text
+        ).into())); // Convert String to Box<dyn Error>
+    }
+
+    let id = Uuid::new_v4().to_string();
+    let event_name = format!("stream-{}", id);
+    let event_name_clone = event_name.clone();
+
+    tauri::async_runtime::spawn(async move {
+        loop {
+            match response.chunk().await {
+                Ok(Some(bytes)) => {
+                    let payload = bytes.to_vec();
+                    window.emit(&event_name_clone, payload).unwrap_or(());
+                }
+                Ok(None) => {
+                    break;
+                }
+                Err(e) => {
+                    window
+                        .emit(&format!("{}-error", event_name_clone), e.to_string())
+                        .unwrap_or(());
+                    break;
+                }
+            }
+        }
+        window
+            .emit(&format!("{}-end", event_name_clone), ())
+            .unwrap_or(());
+    });
+
+    Ok(event_name)
+}

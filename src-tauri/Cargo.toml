@@ -40,6 +40,8 @@ walkdir = "2.5"
 thiserror = "1.0"
 font-kit = "0.14.2"
 image = "0.25.4"
+uuid = { version = "1.8", features = ["v4", "fast-rng", "macro-diagnostics"] }
+
 
 [target.'cfg(target_os = "macos")'.dependencies]
 macos-accessibility-client = "0.0.1"

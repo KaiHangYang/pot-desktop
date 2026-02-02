@@ -29,34 +29,64 @@ async function tts(text, _lang, options = {}) {
     if (!speed) {
         speed = 1.0;
     }
-    console.log(speed);
-    if (options.onData && utils.fetch) {
-        const fetch = utils.fetch;
-        const res = await fetch(requestPath, {
-            method: "POST",
-            headers: {
+    console.log(`TTS Plugin: Requesting ${requestPath} with speed ${speed}`);
+    
+    if (options.onData) {
+        try {
+            let res;
+            const headers = {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${apiKey}`
-            },
-            body: JSON.stringify({
+            };
+            const body = JSON.stringify({
                 model,
                 voice,
                 speed: parseFloat(speed),
                 input: text,
-            })
-        });
+            });
 
-        if (res.ok) {
-            const reader = res.body.getReader();
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-                options.onData(value);
+            if (utils.streamFetch) {
+                console.log("TTS Plugin: Using streamFetch");
+                res = await utils.streamFetch(requestPath, {
+                    method: "POST",
+                    headers,
+                    body
+                });
+            } else if (utils.fetch) {
+                console.log("TTS Plugin: Using browser fetch");
+                res = await utils.fetch(requestPath, {
+                    method: "POST",
+                    headers,
+                    body
+                });
             }
-            return [];
-        } else {
-            const errText = await res.text();
-            throw `Http Request Error\nHttp Status: ${res.status}\n${errText}`;
+
+            if (res && res.ok) {
+                console.log("TTS Plugin: Response OK, starting stream");
+                const reader = res.body.getReader();
+                try {
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) {
+                            console.log("TTS Plugin: Stream done");
+                            break;
+                        }
+                        if (options.onData) {
+                            options.onData(value);
+                        }
+                    }
+                } catch (e) {
+                    console.error("TTS Plugin: Stream Error", e);
+                    throw e; 
+                }
+                return [];
+            } else if (res) {
+                 console.error("TTS Plugin: Response NOT OK", res.status);
+                 throw `Http Request Error\nHttp Status: ${res.status}`;
+            }
+        } catch (fetchErr) {
+             console.error("TTS Plugin: Fetch Error, falling back to non-streaming", fetchErr);
+             // Do not throw, allow fallback to Tauri HTTP client below
         }
     }
 

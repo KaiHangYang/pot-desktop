@@ -369,14 +369,25 @@ export default function TargetArea(props) {
                 throw new Error('Language not supported');
             }
             const instanceConfig = serviceInstanceConfigMap[instanceKey];
+            let player = null;
             let data = await builtinTtsServices[getServiceName(instanceKey)].tts(
                 result,
                 builtinTtsServices[getServiceName(instanceKey)].Language[targetLanguage],
                 {
                     config: instanceConfig,
+                    onData: (chunk) => {
+                        if (!player) {
+                            player = playStream();
+                        }
+                        player.append(chunk);
+                    }
                 }
             );
-            speak(data);
+            if (player) {
+                player.end();
+            } else {
+                speak(data);
+            }
         }
     };
 

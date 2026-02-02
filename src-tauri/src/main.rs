@@ -165,7 +165,8 @@ fn main() {
             install_plugin,
             font_list,
             aliyun,
-            clear_webview_cache 
+            clear_webview_cache,
+            stream_fetch
         ])
         .on_system_tray_event(tray_event_handler)
         .build(tauri::generate_context!())

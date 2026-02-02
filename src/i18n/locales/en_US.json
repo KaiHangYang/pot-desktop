@@ -432,11 +432,18 @@
                 },
                 "qrcode": {
                     "title": "QR Code"
+                },
+                "openai_recognize": {
+                    "title": "OpenAI Compatible"
                 }
             },
             "tts": {
                 "lingva_tts": {
                     "title": "Lingva",
+                    "request_path": "Request Path"
+                },
+                "openai_tts": {
+                    "title": "OpenAI Compatible TTS",
                     "request_path": "Request Path"
                 }
             },
