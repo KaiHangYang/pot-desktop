@@ -1,10 +1,7 @@
-## 3.0.7 (2025-5-10)
+## 3.0.8 (2026-02-02)
 
-### New feature:
+### New Features
 
--   signed macOS app
-
-### Bugs fixed:
-
--   fix screenshot on macOS
--   rm tray click event on macOS
+- Added support for OpenAI-compatible TTS (Text-to-Speech) and Recognize (OCR) services.
+- Added a "Clear WebView Cache" button in General settings to resolve potential UI rendering issues.
+- Implemented streaming audio support for TTS services to reduce perceived latency.
