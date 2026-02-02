@@ -22,6 +22,7 @@ export async function invoke_plugin(pluginType, pluginName) {
     }
     const utils = {
         tauriFetch: http.fetch,
+        fetch: fetch,
         http,
         readBinaryFile,
         readTextFile,

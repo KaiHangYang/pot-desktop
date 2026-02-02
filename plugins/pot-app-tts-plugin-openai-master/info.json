@@ -1,0 +1,61 @@
+{
+  "id": "plugin.com.pot-app.openai_tts",
+  "plugin_type": "tts",
+  "icon": "openai.svg",
+  "display": "OpenAI兼容TTS",
+  "homepage": "https://github.com/pot-app/pot-app-tts-plugin-openai",
+  "needs": [
+    {
+      "key": "requestPath",
+      "display": "请求路径",
+      "type": "input"
+    },
+    {
+      "key": "apiKey",
+      "display": "API Key",
+      "type": "input"
+    },
+    {
+      "key": "model",
+      "display": "模型",
+      "type": "input"
+    },
+    {
+      "key": "voice",
+      "display": "声音",
+      "type": "input"
+    },
+    {
+      "key": "speed",
+      "display": "语速",
+      "type": "select",
+      "options": {
+        "0.25": 0.25,
+        "0.5": 0.5,
+        "0.75": 0.75,
+        "1.0": 1.0,
+        "1.25": 1.25,
+        "1.5": 1.5,
+        "2.0": 2.0,
+        "3.0": 3.0,
+        "4.0": 4.0
+      }
+    }
+  ],
+  "language": {
+    "zh_cn": "zh",
+    "zh_tw": "zh",
+    "en": "en",
+    "ja": "jp",
+    "ko": "ko",
+    "fr": "fr",
+    "es": "es",
+    "ru": "ru",
+    "de": "de",
+    "it": "it",
+    "tr": "tr",
+    "pt_pt": "pt",
+    "pt_br": "pt",
+    "vi": "vi"
+  }
+}

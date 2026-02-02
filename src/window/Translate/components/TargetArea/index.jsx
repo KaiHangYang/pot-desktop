@@ -83,7 +83,7 @@ export default function TargetArea(props) {
     const { t } = useTranslation();
     const textAreaRef = useRef();
     const toastStyle = useToastStyle();
-    const speak = useVoice();
+    const { speak, playStream } = useVoice();
     const theme = useTheme();
 
     useEffect(() => {
@@ -346,11 +346,24 @@ export default function TargetArea(props) {
                 throw new Error('Language not supported');
             }
             let [func, utils] = await invoke_plugin('tts', getServiceName(instanceKey));
+            
+            let player = null;
+
             let data = await func(result, ttsPluginInfo.language[targetLanguage], {
                 config: pluginConfig,
                 utils,
+                onData: (chunk) => {
+                    if (!player) {
+                        player = playStream();
+                    }
+                    player.append(chunk);
+                }
             });
-            speak(data);
+            if (player) {
+                player.end();
+            } else {
+                speak(data);
+            }
         } else {
             if (!(targetLanguage in builtinTtsServices[getServiceName(instanceKey)].Language)) {
                 throw new Error('Language not supported');
